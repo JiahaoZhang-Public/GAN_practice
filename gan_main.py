@@ -27,7 +27,7 @@ transform = transforms.Compose([
     transforms.Normalize([0.5], [0.5])
 ])
 
-train_dataset = datasets.ImageFolder(root='datasets/flowers', transform=transform)
+train_dataset = datasets.ImageFolder(root=config.train_dataset, transform=transform)
 train_loader = DataLoader(train_dataset, batch_size=config.batch_size, shuffle=True)
 
 os.makedirs('saved_models', exist_ok=True)

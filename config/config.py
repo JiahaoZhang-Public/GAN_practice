@@ -10,3 +10,4 @@ class Config:
         self.beta2 = 0.999
         self.num_classes = 5
         self.max_images_per_class = 1000  # 每个类别最多使用的照片个数
+        self.train_dataset = 'datasets/flowers'

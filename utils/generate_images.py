@@ -29,4 +29,4 @@ def generate_images(generator_path, num_images, save_dir):
 
 # Example usage
 if __name__ == "__main__":
-    generate_images('saved_models/generator_epoch_20.pth', 1000, 'datasets/flowers/generated')
+    generate_images('saved_models/generator_epoch_20.pth', 1000, config.train_dataset+'/generated')

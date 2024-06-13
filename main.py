@@ -28,8 +28,8 @@ def sample_dataset(dataset, max_images_per_class):
     return Subset(dataset, sampled_indices)
 
 
-train_dataset = datasets.ImageFolder(root='datasets/flowers', transform=transform)
-train_generated_dataset = datasets.ImageFolder(root='datasets/flowers/generated', transform=transform)
+train_dataset = datasets.ImageFolder(root=config.train_dataset, transform=transform)
+train_generated_dataset = datasets.ImageFolder(root=config.train_dataset+'/generated', transform=transform)
 
 train_dataset = sample_dataset(train_dataset, config.max_images_per_class)
 train_generated_dataset = sample_dataset(train_generated_dataset, config.max_images_per_class)
