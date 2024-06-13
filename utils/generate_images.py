@@ -2,6 +2,7 @@
 """
     @description    : use the saved gan model to generate more data to advance the classifier
 """
+# utils/generate_images.py
 import torch
 from torchvision.utils import save_image
 from model.gan.generator import build_generator
@@ -27,4 +28,5 @@ def generate_images(generator_path, num_images, save_dir):
 
 
 # Example usage
-generate_images('saved_models/generator_epoch_20.pth', 1000, 'datasets/flowers/generated')
+if __name__ == "__main__":
+    generate_images('saved_models/generator_epoch_20.pth', 1000, 'datasets/flowers/generated')
