@@ -1,4 +1,4 @@
-# gan_main.py
+## gan_main.py
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -8,6 +8,7 @@ from torchvision.utils import save_image
 from config.config import Config
 from model.gan.generator import build_generator
 from model.gan.discriminator import build_discriminator
+from tqdm import tqdm
 import os
 
 config = Config()
@@ -33,13 +34,14 @@ train_loader = DataLoader(train_dataset, batch_size=config.batch_size, shuffle=T
 os.makedirs('saved_models', exist_ok=True)
 
 for epoch in range(config.num_epochs):
-    for i, (imgs, _) in enumerate(train_loader):
+    progress_bar = tqdm(train_loader, desc=f"Epoch {epoch+1}/{config.num_epochs}")
+    for i, (imgs, _) in enumerate(progress_bar):
         # Train Discriminator
         optimizer_D.zero_grad()
         real_imgs = imgs.to(device)
         b_size = real_imgs.size(0)
-        real_labels = torch.full((b_size,), 1, dtype=torch.float, device=device)
-        fake_labels = torch.full((b_size,), 0, dtype=torch.float, device=device)
+        real_labels = torch.full((b_size, 1), 1, dtype=torch.float, device=device)
+        fake_labels = torch.full((b_size, 1), 0, dtype=torch.float, device=device)
 
         real_validity = discriminator(real_imgs)
         d_real_loss = adversarial_loss(real_validity, real_labels)
@@ -56,13 +58,17 @@ for epoch in range(config.num_epochs):
         # Train Generator
         optimizer_G.zero_grad()
         fake_validity = discriminator(fake_imgs)
-        g_loss = adversarial_loss(fake_validity, real_labels)
+        g_loss = adversarial_loss(fake_validity, real_labels)  # Use real_labels for generator loss
         g_loss.backward()
         optimizer_G.step()
 
-    print(f"Epoch [{epoch+1}/{config.num_epochs}], D Loss: {d_loss.item()}, G Loss: {g_loss.item()}")
+        progress_bar.set_postfix(D_loss=d_loss.item(), G_loss=g_loss.item())
 
     if epoch % 5 == 0:
         save_image(fake_imgs.data[:25], f"results/epoch_{epoch}.png", nrow=5, normalize=True)
         torch.save(generator.state_dict(), f"saved_models/generator_epoch_{epoch}.pth")
         torch.save(discriminator.state_dict(), f"saved_models/discriminator_epoch_{epoch}.pth")
+
+# Save the final model
+torch.save(generator.state_dict(), "saved_models/generator_final.pth")
+torch.save(discriminator.state_dict(), "saved_models/discriminator_final.pth")
